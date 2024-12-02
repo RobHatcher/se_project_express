@@ -1,4 +1,5 @@
 const router = require("express").Router();
+const { INTERNAL_SERVER_ERROR } = require("../ultils/errors");
 
 const userRouter = require("./users");
 const itemRouter = require("./clothingItems");
@@ -7,7 +8,7 @@ router.use("/users", userRouter);
 router.use("/items", itemRouter);
 
 router.use((req, res) => {
-  res.status(500).send({message: 'Router not found'})
+  res.status(INTERNAL_SERVER_ERROR).send({message: 'Router not found'})
 })
 
 module.exports = router;
