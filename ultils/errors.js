@@ -6,4 +6,4 @@ module.exports = {
   BAD_REQUEST,
   NOT_FOUND,
   INTERNAL_SERVER_ERROR,
-}
+};

@@ -4,9 +4,10 @@ const validator = require("validator");
 const userSchema = new mongoose.Schema({
   name: {
     type: String,
-    required: [true, "The name field is required" ],
+    required: [true, "The name field is required"],
     minlength: 2,
-    maxlength: 30 },
+    maxlength: 30,
+  },
   avatar: {
     type: String,
     required: [true, "The avatar field is required"],
@@ -19,4 +20,4 @@ const userSchema = new mongoose.Schema({
   },
 });
 
-module.export = mongoose.model("user", userSchema);
+module.exports = mongoose.model("user", userSchema);
