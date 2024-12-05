@@ -27,21 +27,7 @@ const getItems = (req, res) => {
     .catch((err) => {
       res
         .status(INTERNAL_SERVER_ERROR)
-        .send({ message: "Error from getItems", err });
-    });
-};
-
-const updateItem = (req, res) => {
-  const { itemId } = req.params;
-  const { imageUrl } = req.body;
-
-  ClothingItem.findByIdAndUpdate(itemId, { $set: { imageUrl } })
-    .orFail()
-    .then((item) => res.status(200).send({ data: item }))
-    .catch((err) => {
-      res
-        .status(INTERNAL_SERVER_ERROR)
-        .send({ message: "Error from updateItem", err });
+        .send({ message: "Error from getItems" });
     });
 };
 
@@ -107,7 +93,6 @@ const dislikeItem = (req, res) => {
 module.exports = {
   createItem,
   getItems,
-  updateItem,
   deleteItem,
   likeItem,
   dislikeItem,
