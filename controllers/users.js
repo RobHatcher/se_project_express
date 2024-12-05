@@ -3,7 +3,7 @@ const {
   BAD_REQUEST,
   NOT_FOUND,
   INTERNAL_SERVER_ERROR,
-} = require("../ultils/errors");
+} = require("../utils/errors");
 
 const getUsers = (req, res) => {
   User.find({})

@@ -3,7 +3,7 @@ const {
   INTERNAL_SERVER_ERROR,
   NOT_FOUND,
   BAD_REQUEST,
-} = require("../ultils/errors");
+} = require("../utils/errors");
 
 const createItem = (req, res) => {
   const { name, weather, imageUrl } = req.body;
