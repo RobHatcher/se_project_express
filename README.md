@@ -10,10 +10,21 @@ Project 12 break down:
 - configure the first routes and controllers
 - handle error codes
 
+Project 13 break down:
+- Added Email and Password to userSchema
+- Created Routes and Controllers for signing up and signing in
+- Created Routes and Controllers for modifying the current user data
+- Created Path for Authorization by creating middleware/auth.js file
+- Added a Hash to the password for user protection
+- Users can no longer delete items added by other users
+
 TECHNOLOGIES:
 Express.js - The web framework for building the API and providing Middleware functions.
+Node.js - An open-source, cross-platform JavaScript runtime environment that allows developers to execute JavaScript code outside of a web browser.
 Postman - Handle Testing API Requests to Create, Send, Validate and Delete Items.
 Mongoose - Interacts with MongoDB to create, retrieve, update, and delete test data.
+MongoDB - A document-oriented, open-source database management program that's used to store and manage large amounts of data.
+ESLint - A static code analysis tool that helps identify and fix errors in JavaScript code.
 
 
 ## Running the Project
