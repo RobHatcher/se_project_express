@@ -91,7 +91,6 @@ const likeItem = (req, res) => {
     })
     .catch((err) => {
       console.error(err);
-      console.log("Test" + err.name);
       if (err.name === "DocumentNotFoundError") {
         return res
           .status(Errors.NOT_FOUND.code)
