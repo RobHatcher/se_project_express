@@ -32,8 +32,10 @@ const getCurrentUser = (req, res) => {
 };
 
 const createUser = (req, res) => {
+  console.log("test 2");
   try {
     const { name, avatar, email, password } = req.body;
+    console.log(req.body);
 
     if (!name || !avatar || !email || !password) {
       res
@@ -165,7 +167,15 @@ const login = (req, res) => {
       const token = jwt.sign({ _id: user._id }, JWT_SECRET, {
         expiresIn: "7d",
       });
-      res.send({ token });
+      res.send({
+        token,
+        user: {
+          name: user.name,
+          avatar: user.avatar,
+          email: user.email,
+          _id: user._id,
+        },
+      });
     })
     .catch((err) => {
       if (err.message === "Incorrect email or password") {
