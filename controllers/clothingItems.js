@@ -4,8 +4,9 @@ const Errors = require("../utils/errors");
 const createItem = (req, res) => {
   const { name, weather, imageUrl } = req.body;
   const owner = req.user._id;
+  console.log("before create userid" + req.user._id);
 
-  ClothingItem.create({ name, weather, imageUrl, owner })
+  ClothingItem.create({ name, weather, imageUrl, owner})
     .then((item) => res.status(201).send(item))
     .catch((err) => {
       console.error(err);
