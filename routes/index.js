@@ -1,5 +1,5 @@
 const router = require("express").Router();
-const Errors = require("../utils/errors");
+const { NOT_FOUND_CODE } = require("../utils/errors/not-found-err");
 const { authorize } = require("../middlewares/auth");
 
 const userRouter = require("./users");
@@ -12,8 +12,8 @@ router.post("/signin", login);
 router.use("/users", authorize, userRouter);
 router.use("/items", itemRouter);
 
-router.use((req, res) =>
-  res.status(Errors.NOT_FOUND.code).send({ message: Errors.NOT_FOUND.message })
-);
+router.use((req, res, next) => {
+  next(new NOT_FOUND_CODE("Router Not Found"));
+});
 
 module.exports = router;
