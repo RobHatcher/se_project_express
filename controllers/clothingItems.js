@@ -85,20 +85,19 @@ const dislikeItem = (req, res, next) => {
     { $pull: { likes: req.user._id } },
     { new: true }
   )
-    .orFail(() => {
-      const error = new Error("Card ID Not Found");
-      error.statusCode = NOT_FOUND_CODE;
-      throw error;
-    })
-    .then((item) => {
-      res.status(200).send({ data: item });
-    })
-    .catch((err) => {
-      if (err.statusCode === NOT_FOUND_CODE) {
-        next(new NOT_FOUND_CODE("Item Not Found"));
-      }
-      next(new INTERNAL_SERVER_ERROR_CODE("Internal Server Error"));
-    });
+  .orFail()
+  .then((item) => {
+    if (!item) {
+      next(new NOT_FOUND_CODE("Item Not Found"));
+    }
+    return res.status(200).send(item);
+  })
+  .catch((err) => {
+    if (err.name === "CastError") {
+      next(new BAD_REQUEST_CODE("Item Not Found"));
+    }
+    next(new INTERNAL_SERVER_ERROR_CODE("Internal Server Error"));
+  });
 };
 
 module.exports = {

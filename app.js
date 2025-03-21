@@ -26,6 +26,10 @@ app.use(cors());
 app.post("/signup", createUser);
 app.post("/signin", login);
 
+app.get('/', (req, res) => {
+  res.send('Welcome to the home page');
+});
+
 app.use(requestLogger);
 app.use("/", mainRouter);
 app.use(errorLogger);
