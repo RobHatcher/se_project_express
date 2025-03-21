@@ -9,7 +9,7 @@ const {
 } = require("../utils/errors/internal-server-err");
 const { CONFLICT_CODE } = require("../utils/errors/conflict-err");
 const { UNAUTHORIZED_ERROR_CODE } = require("../utils/errors/unauthorized-err");
-const { JWT_SECRET } = require("../utils/config");
+const JWT_SECRET = require("../utils/config");
 
 const getCurrentUser = (req, res, next) => {
   const userId = req.user?._id;
