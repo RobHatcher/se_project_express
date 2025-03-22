@@ -9,7 +9,7 @@ const {
 } = require("../utils/errors/internal-server-err");
 const { CONFLICT_CODE } = require("../utils/errors/conflict-err");
 const { UNAUTHORIZED_ERROR_CODE } = require("../utils/errors/unauthorized-err");
-const JWT_SECRET = require("../utils/config");
+const { JWT_SECRET } = require("../utils/config");
 
 const getCurrentUser = (req, res, next) => {
   const userId = req.user?._id;
@@ -33,7 +33,6 @@ const getCurrentUser = (req, res, next) => {
 const createUser = (req, res, next) => {
   try {
     const { name, avatar, email, password } = req.body;
-    console.log(req.body);
 
     if (!name || !avatar || !email || !password) {
       next(new BAD_REQUEST_CODE("User Not Found"));
@@ -116,8 +115,9 @@ const updateUser = (req, res, next) => {
 const login = (req, res, next) => {
   const { email, password } = req.body;
 
+
   if (!email || !password) {
-    next(new BAD_REQUEST_CODE("The Password and Email Fields are Required"));
+    return next(new BAD_REQUEST_CODE("The Password and Email Fields are Required"));
   }
 
   return User.findUserByCredentials(email, password)
@@ -138,8 +138,9 @@ const login = (req, res, next) => {
     .catch((err) => {
       if (err.message === "Incorrect Email or Password") {
         next(new UNAUTHORIZED_ERROR_CODE("Incorrect Email or Password"));
-      }
+      } else {
       next(new INTERNAL_SERVER_ERROR_CODE("Internal Server Error"));
+      }
     });
 };
 
