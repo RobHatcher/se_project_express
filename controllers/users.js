@@ -2,13 +2,13 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const validator = require("validator");
 const User = require("../models/user");
-const { BAD_REQUEST_CODE } = require("../utils/errors/bad-request-err");
-const { NOT_FOUND_CODE } = require("../utils/errors/not-found-err");
+const { BadRequestError } = require("../utils/errors/bad-request-err");
+const { NotFoundError } = require("../utils/errors/not-found-err");
 const {
-  INTERNAL_SERVER_ERROR_CODE,
+  InternalServerError,
 } = require("../utils/errors/internal-server-err");
-const { CONFLICT_CODE } = require("../utils/errors/conflict-err");
-const { UNAUTHORIZED_ERROR_CODE } = require("../utils/errors/unauthorized-err");
+const { ConflictError } = require("../utils/errors/conflict-err");
+const { UnauthorizedError } = require("../utils/errors/unauthorized-err");
 const { JWT_SECRET } = require("../utils/config");
 
 const getCurrentUser = (req, res, next) => {
@@ -21,12 +21,12 @@ const getCurrentUser = (req, res, next) => {
     })
     .catch((err) => {
       if (err.name === "DocumentNotFoundError") {
-        next(new NOT_FOUND_CODE("User Not Found"));
+        next(new NotFoundError("User Not Found"));
       }
       if (err.name === "CastError") {
-        next(new BAD_REQUEST_CODE("User Not Found"));
+        next(new BadRequestError("User Not Found"));
       }
-      next(new INTERNAL_SERVER_ERROR_CODE("Internal Service Error"));
+      next(new InternalServerError("Internal Service Error"));
     });
 };
 
@@ -35,21 +35,21 @@ const createUser = (req, res, next) => {
     const { name, avatar, email, password } = req.body;
 
     if (!name || !avatar || !email || !password) {
-      next(new BAD_REQUEST_CODE("User Not Found"));
+      next(new BadRequestError("User Not Found"));
     }
 
     if (!validator.isURL(avatar)) {
-      next(new BAD_REQUEST_CODE("Invalid Data"));
+      next(new BadRequestError("Invalid Data"));
     }
 
     if (!validator.isEmail(email)) {
-      next(new BAD_REQUEST_CODE("Invalid Data"));
+      next(new BadRequestError("Invalid Data"));
     }
 
     User.findOne({ email })
       .then((existingUser) => {
         if (existingUser) {
-          throw new CONFLICT_CODE("This Email is Already in Use");
+          throw new ConflictError("This Email is Already in Use");
         }
         return bcrypt.hash(password, 10);
       })
@@ -69,18 +69,18 @@ const createUser = (req, res, next) => {
         console.error("Error occured in Add User Request:", err);
 
         if (err.name === "ValidationError") {
-          next(new BAD_REQUEST_CODE("Invalid Data"));
+          next(new BadRequestError("Invalid Data"));
         }
 
         if (err.statusCode === 409) {
-          next(new CONFLICT_CODE("This Email is Already in Use"));
+          next(new ConflictError("This Email is Already in Use"));
         } else {
           next(err);
         }
       });
   } catch (err) {
     console.error("Unexpected error:", err);
-    next(new INTERNAL_SERVER_ERROR_CODE("Internal Server Error"));
+    next(new InternalServerError("Internal Server Error"));
   }
 };
 
@@ -89,7 +89,7 @@ const updateUser = (req, res, next) => {
   const { name, avatar } = req.body;
 
   if (!name || !avatar) {
-    next(new BAD_REQUEST_CODE("User Not Found"));
+    next(new BadRequestError("User Not Found"));
   }
 
   User.findByIdAndUpdate(
@@ -100,24 +100,29 @@ const updateUser = (req, res, next) => {
     .select("-password")
     .then((user) => {
       if (!user) {
-        next(new NOT_FOUND_CODE("User Not Found"));
+        next(new NotFoundError("User Not Found"));
       }
       res.status(200).send(user);
     })
     .catch((err) => {
       if (err.name === "ValidationError") {
-        next(new BAD_REQUEST_CODE("Invalid Data"));
+        next(new BadRequestError("Invalid Data"));
       }
-      next(new INTERNAL_SERVER_ERROR_CODE("Internal Server Error"));
+      next(new InternalServerError("Internal Server Error"));
     });
 };
 
 const login = (req, res, next) => {
   const { email, password } = req.body;
 
-
   if (!email || !password) {
-    return next(new BAD_REQUEST_CODE("The Password and Email Fields are Required"));
+    return next(
+      new BadRequestError("The password and email Fields are required")
+    );
+  }
+
+  if (!validator.isEmail(email)) {
+    return next(new BadRequestError("Invalid email format"));
   }
 
   return User.findUserByCredentials(email, password)
@@ -136,10 +141,10 @@ const login = (req, res, next) => {
       });
     })
     .catch((err) => {
-      if (err.message === "Incorrect Email or Password") {
-        next(new UNAUTHORIZED_ERROR_CODE("Incorrect Email or Password"));
+      if (err.message === "Incorrect email or password") {
+        next(new UnauthorizedError("Incorrect email or password"));
       } else {
-      next(new INTERNAL_SERVER_ERROR_CODE("Internal Server Error"));
+        next(new InternalServerError("Internal Server Error"));
       }
     });
 };

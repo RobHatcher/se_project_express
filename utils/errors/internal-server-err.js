@@ -1,4 +1,4 @@
-class INTERNAL_SERVER_ERROR_CODE extends Error {
+class InternalServerError extends Error {
   constructor(message) {
     super(message);
     this.statusCode = 500;
@@ -6,5 +6,5 @@ class INTERNAL_SERVER_ERROR_CODE extends Error {
 }
 
 module.exports = {
-  INTERNAL_SERVER_ERROR_CODE,
+  InternalServerError,
 };

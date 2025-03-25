@@ -1,4 +1,4 @@
-class BAD_REQUEST_CODE extends Error {
+class BadRequestError extends Error {
   constructor(message) {
     super(message);
     this.statusCode = 400;
@@ -6,5 +6,5 @@ class BAD_REQUEST_CODE extends Error {
 }
 
 module.exports = {
-  BAD_REQUEST_CODE,
+  BadRequestError,
 };

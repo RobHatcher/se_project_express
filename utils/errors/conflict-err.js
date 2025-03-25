@@ -1,4 +1,4 @@
-class CONFLICT_CODE extends Error {
+class ConflictError extends Error {
   constructor(message) {
     super(message);
     this.statusCode = 409;
@@ -6,5 +6,5 @@ class CONFLICT_CODE extends Error {
 }
 
 module.exports = {
-  CONFLICT_CODE,
+  ConflictError,
 };

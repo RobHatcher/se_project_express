@@ -1,9 +1,9 @@
 const ClothingItem = require("../models/clothingItem");
-const { BAD_REQUEST_CODE } = require("../utils/errors/bad-request-err");
-const { NOT_FOUND_CODE } = require("../utils/errors/not-found-err");
-const { FORBIDDEN_ERROR_CODE } = require("../utils/errors/forbidden-err");
+const { BadRequestError } = require("../utils/errors/bad-request-err");
+const { NotFoundError } = require("../utils/errors/not-found-err");
+const { ForbiddenError } = require("../utils/errors/forbidden-err");
 const {
-  INTERNAL_SERVER_ERROR_CODE,
+  InternalServerError,
 } = require("../utils/errors/internal-server-err");
 
 const createItem = (req, res, next) => {
@@ -14,9 +14,9 @@ const createItem = (req, res, next) => {
     .then((item) => res.status(201).send(item))
     .catch((err) => {
       if (err.name === "ValidationError") {
-        next(new BAD_REQUEST_CODE("Invalid Data"));
+        next(new BadRequestError("Invalid Data"));
       }
-      next(new INTERNAL_SERVER_ERROR_CODE("Internal Server Error"));
+      next(new InternalServerError("Internal Server Error"));
     });
 };
 
@@ -24,7 +24,7 @@ const getItems = (req, res, next) => {
   ClothingItem.find({})
     .then((items) => res.status(200).send(items))
     .catch((err) => {
-      next(new INTERNAL_SERVER_ERROR_CODE("Error from getItems"));
+      next(new InternalServerError("Error from getItems"));
     });
 };
 
@@ -33,28 +33,35 @@ const deleteItem = (req, res, next) => {
   const userId = req.user?._id;
 
   if (!itemId) {
-    next(new BAD_REQUEST_CODE("Invalid ID Format"));
+    next(new BadRequestError("Invalid ID Format"));
     return;
   }
 
   ClothingItem.findById(itemId)
-    .orFail()
     .then((item) => {
+      if (!item) { return next(new NotFoundError('Item not found')); }
+
       if (!item.owner.equals(userId)) {
-        return next(new FORBIDDEN_ERROR_CODE("Forbidden Error"));
+        return next(new ForbiddenError("Forbidden Error"));
       }
 
       return ClothingItem.findByIdAndDelete(itemId).then((deletedItem) => {
         if (!deletedItem) {
-          return next(new NOT_FOUND_CODE("Item Not Found"));
+          return next(new NotFoundError("Item Not Found"));
         }
-        return res.status(200).send({ message: "Item Deleted", deleteItem });
+        return res.status(200).send({ message: "Item Deleted", deletedItem });
       });
     })
 
-    .catch(() => {
-      next(new INTERNAL_SERVER_ERROR_CODE("Error From deleteItem"));
-    });
+    .catch((err) => {
+      if (err.name === "CastError") {
+          return next(new BadRequestError("Invalid Item ID"));
+      }
+      if (err.name === "DocumentNotFoundError") {
+          return next(new NotFoundError("Item Not Found"));
+      }
+      return next(new InternalServerError("Error from deleteItem"));
+  });
 };
 
 const likeItem = (req, res, next) => {
@@ -66,16 +73,19 @@ const likeItem = (req, res, next) => {
     .orFail()
     .then((item) => {
       if (!item) {
-        next(new NOT_FOUND_CODE("Item Not Found"));
+        next(new NotFoundError("Item Not Found"));
       }
       return res.status(200).send(item);
     })
     .catch((err) => {
       if (err.name === "CastError") {
-        next(new BAD_REQUEST_CODE("Item Not Found"));
+          return next(new BadRequestError("Item Not Found"));
       }
-      next(new INTERNAL_SERVER_ERROR_CODE("Internal Server Error"));
-    });
+      if (err.name === "DocumentNotFoundError") {
+          return next(new NotFoundError("Item Not Found"));
+      }
+      return next(new InternalServerError("Internal Server Error"));
+  });
 };
 
 const dislikeItem = (req, res, next) => {
@@ -87,16 +97,19 @@ const dislikeItem = (req, res, next) => {
   .orFail()
   .then((item) => {
     if (!item) {
-      next(new NOT_FOUND_CODE("Item Not Found"));
+      next(new NotFoundError("Item Not Found"));
     }
     return res.status(200).send(item);
   })
   .catch((err) => {
     if (err.name === "CastError") {
-      next(new BAD_REQUEST_CODE("Item Not Found"));
+        return next(new BadRequestError("Item Not Found"));
     }
-    next(new INTERNAL_SERVER_ERROR_CODE("Internal Server Error"));
-  });
+    if (err.name === "DocumentNotFoundError") {
+        return next(new NotFoundError("Item Not Found"));
+    }
+    return next(new InternalServerError("Internal Server Error"));
+});
 };
 
 module.exports = {

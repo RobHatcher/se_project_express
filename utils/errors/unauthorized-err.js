@@ -1,4 +1,4 @@
-class UNAUTHORIZED_ERROR_CODE extends Error {
+class UnauthorizedError extends Error {
   constructor(message) {
     super(message);
     this.statusCode = 401;
@@ -6,5 +6,5 @@ class UNAUTHORIZED_ERROR_CODE extends Error {
 }
 
 module.exports = {
-  UNAUTHORIZED_ERROR_CODE,
+  UnauthorizedError,
 };
