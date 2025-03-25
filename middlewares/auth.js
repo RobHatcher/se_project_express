@@ -16,7 +16,7 @@ const authorize = (req, res, next) => {
     req.user = payload;
     return next();
   } catch (err) {
-    next(new UnauthorizedError("Invalid Token"));
+    return next(new UnauthorizedError("Invalid Token"));
   }
 };
 

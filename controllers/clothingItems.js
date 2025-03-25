@@ -23,7 +23,7 @@ const createItem = (req, res, next) => {
 const getItems = (req, res, next) => {
   ClothingItem.find({})
     .then((items) => res.status(200).send(items))
-    .catch((err) => {
+    .catch(() => {
       next(new InternalServerError("Error from getItems"));
     });
 };
