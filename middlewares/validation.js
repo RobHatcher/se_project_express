@@ -23,7 +23,7 @@ module.exports.validateCardBody = celebrate({
       "string.empty": 'The "name" field must be filled',
     }),
 
-    imageURL: Joi.string().required().custom(validateURL).messages({
+    imageUrl: Joi.string().required().custom(validateURL).messages({
       "string.empty": 'The "imageURL" must be filled',
       "string.uri": 'The "imageURL" field must be a valid URL',
     }),

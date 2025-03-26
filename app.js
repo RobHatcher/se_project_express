@@ -30,9 +30,6 @@ app.use(cors());
 
 app.use(requestLogger);
 
-app.post("/signup", createUser);
-app.post("/signin", login);
-
 app.get('/', (req, res) => {
   res.send('Welcome to the home page');
 });
