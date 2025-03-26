@@ -59,7 +59,7 @@ module.exports.validateInfoBody = celebrate({
 });
 
 module.exports.validateItemId = celebrate({
-  params: Joi.object().keys()({
+  params: Joi.object().keys({
     itemId: Joi.string().alphanum().length(24).required().messages({
       "string.base": "The itemId must be a string",
       "string.alphanum": "The itemId must consist of alphanumeric characters",
